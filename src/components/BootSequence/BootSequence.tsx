@@ -1,21 +1,41 @@
 import "./BootSequence.css"
+import { useState, useEffect } from 'react';
 
 interface BootSequenceProps {
     onBootComplete: () => void;
 }
 
-interface BootLine {
-    text: string;
-    delay: number;
-}
 
-const phase1: BootLine[] = [
-    { text: "[  0.000000] rithishOS kernel v1.0.0 booting...", delay: 300 },
-    { text: "[  0.041233] Detecting CPU cores... 8 found", delay: 300 },
-    { text: "[  0.089421] Initializing memory management unit", delay: 300 },
-    { text: "[  0.132018] Mounting root filesystem (ext4)", delay: 300 },
-    { text: "[  0.201455] Scanning boot devices...", delay: 2500 }, // slow step
+const phase1 = [
+    "[  0.000000] rithishOS kernel v1.0.0 booting...",
+    "[  0.041233] Detecting CPU cores... 8 found",
+    "[  0.089421] Initializing memory management unit",
+    "[  0.132018] Mounting root filesystem (ext4)",
+    "[  0.201455] Scanning boot devices...", // slow step
 ];
+
+
+function PrintLines() {
+    const [visibleCount, setVisibleCount] = useState(0);
+
+    useEffect(() => {
+        if (visibleCount < phase1.length) {
+            const timer = setTimeout(() => {
+                setVisibleCount(prev => prev + 1);
+            }, 500); // half a second delay added.
+
+            return () => clearTimeout(timer);
+        }
+    }, [visibleCount]);
+
+    return (
+        <div>
+            {phase1.slice(0, visibleCount).map((line, index) => (
+                <p key={index}>{line}</p>
+            ))}
+        </div>
+    );
+}
 
 
 const asciiBanner = `██████╗ ██╗████████╗██╗  ██╗██╗███████╗██╗  ██╗         ██████╗ ███████╗
@@ -41,9 +61,7 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
                 <div className="terminal-content">
                     <pre style={{ color: "#FFFFFF", fontFamily: "monospace" }}>{asciiBanner}</pre>
                     <div className="bootMessages">
-                        {phase1.map((line: BootLine, index: number) => (
-                            <p key={index}>{line.text}</p>
-                        ))}
+                        {PrintLines()}
                     </div>
                     <button onClick={onBootComplete}>Test: Complete Boot</button>
                 </div>
