@@ -14,28 +14,23 @@ const phase1 = [
     "[  0.201455] Scanning boot devices...", // slow step
 ];
 
-
-function PrintLines() {
-    const [visibleCount, setVisibleCount] = useState(0);
+const PrintLines = (messageBlocks, delayMs = 1000) => {
+    const [visibleLines, setVisibleLines] = useState([]);
 
     useEffect(() => {
-        if (visibleCount < phase1.length) {
-            const timer = setTimeout(() => {
-                setVisibleCount(prev => prev + 1);
-            }, 500); // half a second delay added.
+        setVisibleLines([]);
+    }, [messageBlocks]);
 
-            return () => clearTimeout(timer);
-        }
-    }, [visibleCount]);
+    useEffect(() => {
+        if (visibleLines.length >= messageBlocks.length) return;
+        const timer = setTimeout(() => {
+            setVisibleLines((prev) => [...prev, messageBlocks[prev.length]]);
+        }, delayMs);
 
-    return (
-        <div>
-            {phase1.slice(0, visibleCount).map((line, index) => (
-                <p key={index}>{line}</p>
-            ))}
-        </div>
-    );
-}
+        return () => clearTimeout(timer);
+    }, [visibleLines, messageBlocks, delayMs]);
+    return visibleLines;
+};
 
 
 const asciiBanner = `██████╗ ██╗████████╗██╗  ██╗██╗███████╗██╗  ██╗         ██████╗ ███████╗
@@ -48,6 +43,7 @@ const asciiBanner = `██████╗ ██╗████████╗�
 
 
 function BootSequence({ onBootComplete }: BootSequenceProps) {
+    const displayLogs = PrintLines(phase1, 800)
     return (
         <div className="bootSequence-backdrop">
             <div className="terminal-window">
@@ -61,7 +57,7 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
                 <div className="terminal-content">
                     <pre style={{ color: "#FFFFFF", fontFamily: "monospace" }}>{asciiBanner}</pre>
                     <div className="bootMessages">
-                        {PrintLines()}
+                        {displayLogs.map((line, i) => <div key={i}>{line}</div>)}
                     </div>
                     <button onClick={onBootComplete}>Test: Complete Boot</button>
                 </div>

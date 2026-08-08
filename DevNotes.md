@@ -15,6 +15,14 @@ This will essentially look like this: <br>
 
 <br>
 <br>
+08/08/2026 <br>
+
+I now have a terminal window which runs a faux boot sequence. Still needs to be refined a lot. Some refines to add: <br>
+* Need to make it seem like the bash window opens up after a short time after boot rather than just be booted as soon as button is clicked.
+* Need to make a reusable system for the messages to print. Without rendering two messages at a time. 
+* Need to initialize the ascii art to print one by one as well.
+* Need to make a user input area where a user could type (y/n) themselves to access the site.
+* Goal is to finish this portion up in two days.
 
 #### _Navbar:_
 
