@@ -11,11 +11,18 @@ const phase1 = [
     "[  0.041233] Detecting CPU cores... 8 found",
     "[  0.089421] Initializing memory management unit",
     "[  0.132018] Mounting root filesystem (ext4)",
-    "[  0.201455] Scanning boot devices...", // slow step
+    "[  0.201455] Scanning boot devices...",
+    "[  0.312890] Loading kernel modules",
+    "[  0.355104] Starting udev device manager",
+    "[  0.398217] Bringing up network interface eth0",
+    "[  0.442556] Resolving hostname: rithishsivaraj.com",
+    "[  0.501120] Establishing secure connection...",
+    "[  0.612334] Checking system permissions...",
+    "[  0.678901] All systems nominal",
 ];
 
-const PrintLines = (messageBlocks, delayMs = 1000) => {
-    const [visibleLines, setVisibleLines] = useState([]);
+const usePrintLines = (messageBlocks: string[], delayMs = 1000) => {
+    const [visibleLines, setVisibleLines] = useState<string[]>([]);
 
     useEffect(() => {
         setVisibleLines([]);
@@ -29,6 +36,7 @@ const PrintLines = (messageBlocks, delayMs = 1000) => {
 
         return () => clearTimeout(timer);
     }, [visibleLines, messageBlocks, delayMs]);
+
     return visibleLines;
 };
 
@@ -40,10 +48,12 @@ const asciiBanner = `██████╗ ██╗████████╗�
 ██║  ██║██║   ██║   ██║  ██║██║███████║██║  ██║        ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝         ╚═════╝ ╚══════╝`;
 
-
+const asciiBannerLines = asciiBanner.split("\n");
 
 function BootSequence({ onBootComplete }: BootSequenceProps) {
-    const displayLogs = PrintLines(phase1, 800)
+    const visibleBannerLines = usePrintLines(asciiBannerLines, 100);
+    const displayLogs = usePrintLines(phase1, 800);
+
     return (
         <div className="bootSequence-backdrop">
             <div className="terminal-window">
@@ -55,9 +65,13 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
                 </div>
 
                 <div className="terminal-content">
-                    <pre style={{ color: "#FFFFFF", fontFamily: "monospace" }}>{asciiBanner}</pre>
+          <pre style={{ color: "#FFFFFF", fontFamily: "monospace" }}>
+            {visibleBannerLines.join("\n")}
+          </pre>
                     <div className="bootMessages">
-                        {displayLogs.map((line, i) => <div key={i}>{line}</div>)}
+                        {displayLogs.map((line, i) => (
+                            <div key={i}>{line}</div>
+                        ))}
                     </div>
                     <button onClick={onBootComplete}>Test: Complete Boot</button>
                 </div>
