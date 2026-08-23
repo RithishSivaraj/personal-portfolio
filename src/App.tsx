@@ -2,6 +2,7 @@
 import { useState } from "react";
 import LandingScreen from "./sections/LandingScreen/LandingScreen.tsx";
 import BootSequence from "./components/BootSequence/BootSequence.tsx";
+import MainSite from "./sections/MainSite/MainSite.tsx"
 
 type Screen = "landing" | "booting" | "site";
 
@@ -26,9 +27,7 @@ function App() {
                 <BootSequence onBootComplete={handleBootComplete} />
             )}
 
-            {currentScreen === "site" && (
-                <div>Site coming soon</div>
-            )}
+            {currentScreen === "site" && <MainSite />}
         </div>
     );
 }

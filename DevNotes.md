@@ -24,6 +24,10 @@ I now have a terminal window which runs a faux boot sequence. Still needs to be 
 * Need to make a user input area where a user could type (y/n) themselves to access the site.
 * Goal is to finish this portion up in two days.
 
+08/22/2026 <br>
+The entire boot sequence animation is complete. I utilized claude to produce the ASCII art, and the log messages for the boot sequence. I am now moving on to constructing the actual site. <br>
+Note to self: Boot sequence animation might be taking too long, and might be better to look for ways to shorten.
+
 #### _Navbar:_
 
 #### _Landing Hero:_
