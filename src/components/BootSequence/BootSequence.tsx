@@ -95,6 +95,7 @@ const asciiBannerLines: BootLine[] = asciiBanner
 type BootStage = "logs" | "prompt" | "granted" | "blank";
 
 function BootSequence({ onBootComplete }: BootSequenceProps) {
+    const inputRef = useRef<HTMLInputElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const [bootStage, setBootStage] = useState<BootStage>("logs");
     const [inputBuffer, setInputBuffer] = useState("");
@@ -108,40 +109,18 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
     const displayPhase2 = usePrintLines(phase2, bootStage === "granted");
     const phase2Done = displayPhase2.length >= phase2.length;
 
+    const focusInput = () => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    };
+
     // logs -> prompt
     useEffect(() => {
         if (logsDone && bootStage === "logs") {
             setBootStage("prompt");
         }
     }, [logsDone, bootStage]);
-
-    // prompt -> granted (types "y" then presses Enter)
-    useEffect(() => {
-        if (bootStage !== "prompt") return;
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Enter") {
-                if (inputBuffer.trim().toLowerCase() === "y") {
-                    setBootStage("granted");
-                } else {
-                    setInputBuffer("");
-                }
-                return;
-            }
-
-            if (event.key === "Backspace") {
-                setInputBuffer((prev) => prev.slice(0, -1));
-                return;
-            }
-
-            if (event.key.length === 1) {
-                setInputBuffer((prev) => prev + event.key);
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [bootStage, inputBuffer]);
 
     // granted -> blank (once phase2 finishes printing)
     useEffect(() => {
@@ -168,6 +147,13 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
         }
     }, [visibleBannerLines, displayLogs, displayPhase2, inputBuffer]);
 
+    // auto-focus the hidden input once the prompt appears
+    useEffect(() => {
+        if (bootStage === "prompt" && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [bootStage]);
+
     return (
         <div className="bootSequence-backdrop">
             <div className="terminal-window">
@@ -178,7 +164,7 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
                     <span className="terminal-title-text">guest@rithishsivaraj: ~</span>
                 </div>
 
-                <div className="terminal-content" ref={contentRef}>
+                <div className="terminal-content" ref={contentRef} onClick={focusInput}>
                     {bootStage !== "blank" && (
                         <>
               <pre style={{ color: "#FFFFFF", fontFamily: "monospace" }}>
@@ -194,8 +180,25 @@ function BootSequence({ onBootComplete }: BootSequenceProps) {
                             {bootStage === "prompt" && (
                                 <div className="bootMessages">
                                     <div>ACCESS REQUEST: allow connection to rithishsivaraj.com? (y/n)</div>
-                                    <div>
-                                        &gt; {inputBuffer}
+                                    <div className="prompt-input-line">
+                                        &gt;{" "}
+                                        <input
+                                            ref={inputRef}
+                                            type="text"
+                                            className="terminal-input"
+                                            value={inputBuffer}
+                                            autoFocus
+                                            onChange={(event) => setInputBuffer(event.target.value)}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter") {
+                                                    if (inputBuffer.trim().toLowerCase() === "y") {
+                                                        setBootStage("granted");
+                                                    } else {
+                                                        setInputBuffer("");
+                                                    }
+                                                }
+                                            }}
+                                        />
                                         <span className="cursor"></span>
                                     </div>
                                 </div>
