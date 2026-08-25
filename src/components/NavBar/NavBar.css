@@ -1,9 +1,18 @@
-.navbar {
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+.navbar-inner {
     display: flex;
     align-items: center;
-    justify-content : normal;
+    gap: 18px;
     padding: 16px 32px;
-    background-color: #0b1115;
+}
+
+.navbar {
+    background-color: #152129;
     position: fixed;
     top: 0;
     left: 0;
@@ -19,6 +28,12 @@
     text-decoration: none;
     padding: 10px 10px;
     left: 0;
+    transition: color 0.2s ease, font-family 0.2s ease;
+}
+
+.navbar-brand:hover {
+    color: #3ecf6f;
+    font-family: "JetBrains Mono", monospace;
 }
 
 .navbar-links {
@@ -38,4 +53,36 @@
 .navbar-link:hover {
     color: #3ecf6f;
     font-family: "JetBrains Mono", monospace;
+}
+
+.navbar-icons {
+    color: #3ecf6f;
+    align-items: normal;
+    margin-right: 16px;
+    margin-left: auto;
+    font-size: 20px;
+    display: flex;
+    gap: 10px;
+    transition: color 0.2s ease;
+}
+
+.icon-linkedin {
+    color: #0077B5;
+}
+.icon-linkedin:hover {
+    color: #4dabf7;
+}
+
+.icon-github {
+    color: #8534F3;
+}
+.icon-github:hover {
+    color: #B870FF;
+}
+
+.icon-mailto {
+    color: #ffffff
+}
+.icon-mailto:hover {
+    color: #3ecf6f;
 }
