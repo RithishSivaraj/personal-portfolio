@@ -1,4 +1,30 @@
 .skills-graph-container {
-    width: 800px;
-    height: 600px;
+    position: relative;
+    height: 900px !important;
+    width: 100%;
+    overflow: hidden;
+}
+
+.skills-graph-text {
+    position: absolute;
+    top: 50%;
+    right: 10%;
+    transform: translateY(-50%);
+    text-align: right;
+    z-index: 10;
+    pointer-events: none;
+    color: #000000;
+}
+
+.skills-graph-text h1 {
+    font-size: 45px;
+    margin: 0;
+    font-family: monospace;
+}
+
+.skills-graph-text p {
+    font-size: 18px;
+    color: #444444;
+    margin-top: 8px;
+    font-family: monospace;
 }

@@ -1,15 +1,29 @@
 import { useRef, useState, useEffect } from 'react';
-import { nodes, links, type GraphLink } from "../../data/skillsGraph";
+import { nodes, links, type GraphNode, type GraphLink } from "../../data/skillsGraph";
 import ForceGraph2D from 'react-force-graph-2d';
+import { forceCollide } from 'd3-force';
+import './SkillsGraph.css';
 
-const graphData = { nodes: nodes, links: links };
+interface SimNode extends GraphNode {
+    x?: number;
+    y?: number;
+    vx?: number;
+    vy?: number;
+}
+
+interface SimLink {
+    source: string | SimNode;
+    target: string | SimNode;
+}
+
+const graphData = { nodes: nodes as SimNode[], links: links as SimLink[] };
 
 const buildAdjacency = (links: GraphLink[]): Record<string, string[]> => {
     const adjacency: Record<string, string[]> = {};
 
-    links.forEach((link: any) => {
-        const sourceId = typeof link.source === "object" ? link.source.id : link.source;
-        const targetId = typeof link.target === "object" ? link.target.id : link.target;
+    links.forEach((link) => {
+        const sourceId = typeof link.source === "object" ? (link.source as SimNode).id : link.source;
+        const targetId = typeof link.target === "object" ? (link.target as SimNode).id : link.target;
 
         if (!adjacency[sourceId]) adjacency[sourceId] = [];
         if (!adjacency[targetId]) adjacency[targetId] = [];
@@ -22,6 +36,12 @@ const buildAdjacency = (links: GraphLink[]): Record<string, string[]> => {
 
 const adjacency = buildAdjacency(links);
 
+const nodeRadius = (node: SimNode): number => {
+    if (node.type === "core") return 10;
+    if (node.type === "project") return 7;
+    return 5; // tool
+};
+
 const findPathToRoot = (startId: string): Set<string> => {
     const path = new Set<string>([startId]);
 
@@ -29,8 +49,6 @@ const findPathToRoot = (startId: string): Set<string> => {
 
     const neighbors = adjacency[startId] || [];
 
-    // if this node connects directly to myskills, it's a project —
-    // include myskills AND every tool this project uses
     if (neighbors.includes("myskills")) {
         path.add("myskills");
         neighbors.forEach((neighborId) => {
@@ -39,8 +57,6 @@ const findPathToRoot = (startId: string): Set<string> => {
         return path;
     }
 
-    // otherwise, it's a tool — find its parent project, then that
-    // project's path to root (existing behavior, unchanged)
     for (const neighborId of neighbors) {
         if (adjacency[neighborId]?.includes("myskills")) {
             path.add(neighborId);
@@ -56,12 +72,9 @@ function SkillsGraph() {
     const containerRef = useRef<HTMLDivElement>(null);
     const graphRef = useRef<any>(null);
     const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-    const [hoveredNode, setHoveredNode] = useState<any>(null);
+    const [hoveredNode, setHoveredNode] = useState<SimNode | null>(null);
 
     const highlightedIds = hoveredNode ? findPathToRoot(hoveredNode.id) : new Set<string>();
-    console.log("hovered:", hoveredNode?.id, "highlighted:", Array.from(highlightedIds));
-    console.log("adjacency for hovered:", adjacency[hoveredNode?.id]);
-
     const isHighlighted = (nodeId: string) => highlightedIds.has(nodeId);
 
     useEffect(() => {
@@ -82,27 +95,40 @@ function SkillsGraph() {
     }, []);
 
     useEffect(() => {
-        if (graphRef.current) {
-            graphRef.current.d3Force('charge').strength(-20);
-        }
-    }, []);
+        if (!graphRef.current || dimensions.width === 0) return;
+
+        graphRef.current.d3Force('charge').strength(-120);
+        graphRef.current.d3Force('collide', forceCollide(nodeRadius));
+        graphRef.current.d3Force('center', null);
+        graphRef.current.d3ReheatSimulation();
+    }, [dimensions]);
 
     return (
         <div className="content-wrapper skills-graph-container" ref={containerRef}>
+            <div className="skills-graph-text">
+                <h1>Hi, I'm Rithish!</h1>
+                <p>Building software, one project at a time.</p>
+            </div>
+
             <ForceGraph2D
                 ref={graphRef}
                 graphData={graphData}
                 width={dimensions.width}
                 height={dimensions.height}
                 nodeLabel="label"
-                nodeColor={(node: any) => (isHighlighted(node.id) ? "#3ecf6f" : "#000000")}
-                linkColor={(link: any) =>
-                    highlightedIds.has(link.source.id) && highlightedIds.has(link.target.id)
+                nodeVal={nodeRadius}
+                nodeColor={(node: SimNode) => (isHighlighted(node.id) ? "#3ecf6f" : "#000000")}
+                linkColor={(link: SimLink) => {
+                    const sourceId = typeof link.source === "object" ? link.source.id : link.source;
+                    const targetId = typeof link.target === "object" ? link.target.id : link.target;
+                    return highlightedIds.has(sourceId) && highlightedIds.has(targetId)
                         ? "#3ecf6f"
-                        : "#000000"
-                }
+                        : "#000000";
+                }}
                 linkOpacity={0.4}
-                onNodeHover={(node) => setHoveredNode(node)}
+                onNodeHover={(node) => setHoveredNode(node as SimNode | null)}
+                enableZoomInteraction={false}
+                enablePanInteraction={false}
             />
         </div>
     );
