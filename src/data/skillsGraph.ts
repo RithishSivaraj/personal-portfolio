@@ -10,7 +10,7 @@ export interface GraphLink {
 }
 
 export const nodes: GraphNode[] = [
-    { id: "myskills", label: "My Skills", type: "core" },
+    { id: "myskills", label: "Projects and tools I've worked with", type: "core" },
     // Project nodes
     { id: "frauddetect", label: "FraudDetect", type: "project" },
     { id: "stockpicker", label: "Distributed Stock Picker", type: "project" },
