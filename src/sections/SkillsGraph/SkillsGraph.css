@@ -1,30 +1,89 @@
+/*
+ * Change this value to match the navbar's actual rendered height.
+ */
+:root {
+    --navbar-height: 90px;
+}
+
 .skills-graph-container {
+    margin-top: var(--navbar-height);
     position: relative;
-    height: 900px !important;
     width: 100%;
+
+    /*
+     * This assumes the navbar is already taking up space in normal
+     * document flow. The section fills the remaining viewport.
+     */
+    height: calc(100dvh - var(--navbar-height));
+
+    /*
+     * Avoid an extremely compressed graph on short screens.
+     * Remove this if the landing section must always fit inside
+     * the viewport without scrolling.
+     */
+    min-height: 600px;
+
     overflow: hidden;
+    box-sizing: border-box;
+    isolation: isolate;
+}
+
+.skills-graph-container canvas {
+    display: block;
 }
 
 .skills-graph-text {
     position: absolute;
     top: 50%;
-    right: 10%;
+    right: clamp(2rem, 10vw, 10%);
     transform: translateY(-50%);
-    text-align: right;
+
     z-index: 10;
     pointer-events: none;
+
     color: #000000;
+    text-align: right;
 }
 
 .skills-graph-text h1 {
-    font-size: 45px;
     margin: 0;
+
     font-family: monospace;
+    font-size: clamp(2rem, 3vw, 45px);
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .skills-graph-text p {
-    font-size: 18px;
-    color: #444444;
-    margin-top: 8px;
+    margin: 8px 0 0;
+
     font-family: monospace;
+    font-size: clamp(0.9rem, 1.25vw, 18px);
+    line-height: 1.4;
+    color: #444444;
+    white-space: nowrap;
+}
+
+/*
+ * On narrower screens, move the heading toward the bottom and let
+ * the graph use the upper portion of the section.
+ */
+@media (max-width: 800px) {
+    .skills-graph-text {
+        top: auto;
+        right: 1.5rem;
+        bottom: 3rem;
+        left: 1.5rem;
+        transform: none;
+    }
+
+    .skills-graph-text h1 {
+        font-size: clamp(1.8rem, 8vw, 2.75rem);
+        white-space: normal;
+    }
+
+    .skills-graph-text p {
+        font-size: 1rem;
+        white-space: normal;
+    }
 }
