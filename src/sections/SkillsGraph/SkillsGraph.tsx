@@ -28,7 +28,9 @@ interface BoundaryForce {
     initialize(nodes: SimNode[]): void;
 }
 
-const GRAPH_PADDING = 24;
+const GRAPH_PADDING_X = 24;
+const GRAPH_PADDING_TOP = 12;
+const GRAPH_PADDING_BOTTOM = 48;
 
 const graphData = {
     nodes: nodes as SimNode[],
@@ -71,13 +73,11 @@ const adjacency = buildAdjacency(links);
 const nodeRadius = (node: SimNode): number => {
     switch (node.type) {
         case "core":
-            return 10;
-
+            return 17;
         case "project":
-            return 7;
-
+            return 10;
         default:
-            return 5;
+            return 6;
     }
 };
 
@@ -114,27 +114,22 @@ const findPathToRoot = (startId: string): Set<string> => {
 };
 
 /**
- * react-force-graph uses graph/world coordinates:
- *
- *              y = -height / 2
- *                     |
- * x = -width / 2 ---- 0 ---- x = width / 2
- *                     |
- *               y = height / 2
- *
- * This force clamps every node inside that visible area.
+ * Keeps every node inside the visible canvas while allowing different
+ * amounts of space along its horizontal, top, and bottom edges.
  */
 const createBoundaryForce = (
     width: number,
     height: number,
-    padding: number
+    horizontalPadding: number,
+    topPadding: number,
+    bottomPadding: number
 ): BoundaryForce => {
     let simulationNodes: SimNode[] = [];
 
-    const leftBoundary = -width / 2 + padding;
-    const rightBoundary = width / 2 - padding;
-    const topBoundary = -height / 2 + padding;
-    const bottomBoundary = height / 2 - padding;
+    const leftBoundary = -width / 2 + horizontalPadding;
+    const rightBoundary = width / 2 - horizontalPadding;
+    const topBoundary = -height / 2 + topPadding;
+    const bottomBoundary = height / 2 - bottomPadding;
 
     const force = (() => {
         simulationNodes.forEach((node) => {
@@ -151,30 +146,18 @@ const createBoundaryForce = (
 
             if (node.x < minimumX) {
                 node.x = minimumX;
-
-                if ((node.vx ?? 0) < 0) {
-                    node.vx = 0;
-                }
+                node.vx = Math.max(0, node.vx ?? 0);
             } else if (node.x > maximumX) {
                 node.x = maximumX;
-
-                if ((node.vx ?? 0) > 0) {
-                    node.vx = 0;
-                }
+                node.vx = Math.min(0, node.vx ?? 0);
             }
 
             if (node.y < minimumY) {
                 node.y = minimumY;
-
-                if ((node.vy ?? 0) < 0) {
-                    node.vy = 0;
-                }
+                node.vy = Math.max(0, node.vy ?? 0);
             } else if (node.y > maximumY) {
                 node.y = maximumY;
-
-                if ((node.vy ?? 0) > 0) {
-                    node.vy = 0;
-                }
+                node.vy = Math.min(0, node.vy ?? 0);
             }
         });
     }) as BoundaryForce;
@@ -187,7 +170,7 @@ const createBoundaryForce = (
 };
 
 function SkillsGraph() {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLElement>(null);
     const graphRef = useRef<any>(null);
 
     const [dimensions, setDimensions] = useState({
@@ -195,8 +178,7 @@ function SkillsGraph() {
         height: 0,
     });
 
-    const [hoveredNode, setHoveredNode] =
-        useState<SimNode | null>(null);
+    const [hoveredNode, setHoveredNode] = useState<SimNode | null>(null);
 
     const highlightedIds = useMemo(() => {
         return hoveredNode
@@ -208,11 +190,6 @@ function SkillsGraph() {
         return highlightedIds.has(nodeId);
     };
 
-    /*
-     * ResizeObserver follows the actual graph container size.
-     * This works when the navbar changes height or the surrounding
-     * page layout changes without a browser resize event.
-     */
     useEffect(() => {
         const container = containerRef.current;
 
@@ -239,9 +216,6 @@ function SkillsGraph() {
         };
     }, []);
 
-    /*
-     * Configure the D3 simulation whenever the canvas size changes.
-     */
     useEffect(() => {
         const graph = graphRef.current;
 
@@ -253,15 +227,9 @@ function SkillsGraph() {
             return;
         }
 
-        /*
-         * World coordinate 0 is the horizontal canvas center.
-         * Negative X places the graph to the left of the heading.
-         *
-         * -22% from the center means the graph is initially
-         * centered at approximately 28% of the canvas width.
-         */
+        // Start left of the heading and slightly above center.
         const initialGraphX = -dimensions.width * 0.22;
-        const initialGraphY = 0;
+        const initialGraphY = -dimensions.height * 0.07;
 
         const chargeForce = graph.d3Force("charge");
 
@@ -277,10 +245,6 @@ function SkillsGraph() {
                 .iterations(2)
         );
 
-        /*
-         * Disable the default centering force because it would pull
-         * the graph back toward the middle of the canvas.
-         */
         graph.d3Force("center", null);
 
         graph.d3Force(
@@ -298,7 +262,9 @@ function SkillsGraph() {
             createBoundaryForce(
                 dimensions.width,
                 dimensions.height,
-                GRAPH_PADDING
+                GRAPH_PADDING_X,
+                GRAPH_PADDING_TOP,
+                GRAPH_PADDING_BOTTOM
             )
         );
 
@@ -310,18 +276,28 @@ function SkillsGraph() {
         const halfHeight = dimensions.height / 2;
         const radius = nodeRadius(node);
 
-        const minimumX = -halfWidth + GRAPH_PADDING + radius;
-        const maximumX = halfWidth - GRAPH_PADDING - radius;
-        const minimumY = -halfHeight + GRAPH_PADDING + radius;
-        const maximumY = halfHeight - GRAPH_PADDING - radius;
+        const minimumX =
+            -halfWidth + GRAPH_PADDING_X + radius;
+        const maximumX =
+            halfWidth - GRAPH_PADDING_X - radius;
+        const minimumY =
+            -halfHeight + GRAPH_PADDING_TOP + radius;
+        const maximumY =
+            halfHeight - GRAPH_PADDING_BOTTOM - radius;
 
         if (node.x != null) {
-            node.x = Math.max(minimumX, Math.min(maximumX, node.x));
+            node.x = Math.max(
+                minimumX,
+                Math.min(maximumX, node.x)
+            );
             node.fx = node.x;
         }
 
         if (node.y != null) {
-            node.y = Math.max(minimumY, Math.min(maximumY, node.y));
+            node.y = Math.max(
+                minimumY,
+                Math.min(maximumY, node.y)
+            );
             node.fy = node.y;
         }
     };
@@ -334,8 +310,15 @@ function SkillsGraph() {
         >
             <div className="skills-graph-text">
                 <h1>Hi, I&apos;m Rithish!</h1>
-                <p>Building software, one project at a time.</p>
+                <p>I'm a software engineer in Austin, TX. I love building things and figuring out how they work. I am always looking for new things to learn!</p>
+                <a
+                    className="skills-graph-cta"
+                    href="mailto:rithishsivaraj@outlook.com?subject=Let%27s%20build%20together"
+                >
+                    Let&apos;s build together
+                </a>
             </div>
+
 
             {dimensions.width > 1 && dimensions.height > 1 && (
                 <ForceGraph2D
@@ -368,9 +351,7 @@ function SkillsGraph() {
                     }}
                     linkOpacity={0.4}
                     onNodeHover={(node) => {
-                        setHoveredNode(
-                            node as SimNode | null
-                        );
+                        setHoveredNode(node as SimNode | null);
                     }}
                     onNodeDrag={(node) => {
                         handleNodeDrag(node as SimNode);

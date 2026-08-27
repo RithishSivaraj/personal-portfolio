@@ -1,31 +1,37 @@
-/*
- * Change this value to match the navbar's actual rendered height.
- */
 :root {
-    --navbar-height: 90px;
+    /* Change this value to match the navbar's rendered height. */
+    --navbar-height: 70px;
 }
 
 .skills-graph-container {
-    margin-top: var(--navbar-height);
     position: relative;
     width: 100%;
 
     /*
-     * This assumes the navbar is already taking up space in normal
-     * document flow. The section fills the remaining viewport.
+     * Shortens the landing section to reduce empty space beneath
+     * the graph.
      */
-    height: calc(100dvh - var(--navbar-height));
+    height: calc(88dvh - var(--navbar-height));
+    min-height: 520px;
 
     /*
-     * Avoid an extremely compressed graph on short screens.
-     * Remove this if the landing section must always fit inside
-     * the viewport without scrolling.
+     * Keeps the section's upper boundary flush with the navbar.
      */
-    min-height: 600px;
+    margin-top: 0;
+    padding-top: 0;
 
     overflow: hidden;
     box-sizing: border-box;
     isolation: isolate;
+}
+
+/*
+ * Overrides spacing if the shared content-wrapper class adds a top
+ * margin or padding.
+ */
+.content-wrapper.skills-graph-container {
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .skills-graph-container canvas {
@@ -34,9 +40,17 @@
 
 .skills-graph-text {
     position: absolute;
-    top: 50%;
+    top: 44%;
     right: clamp(2rem, 10vw, 10%);
     transform: translateY(-50%);
+
+    /*
+     * The heading establishes the column width. The paragraph wraps
+     * inside that width, and the button aligns with its right edge.
+     */
+    display: inline-grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: end;
 
     z-index: 10;
     pointer-events: none;
@@ -55,24 +69,78 @@
 }
 
 .skills-graph-text p {
+    /*
+     * Prevents the paragraph's unwrapped text from expanding the
+     * container beyond the heading width.
+     */
+    width: 0;
+    min-width: 100%;
     margin: 8px 0 0;
 
-    font-family: monospace;
+    font-family: AppleGothic;
     font-size: clamp(0.9rem, 1.25vw, 18px);
     line-height: 1.4;
     color: #444444;
-    white-space: nowrap;
+    white-space: normal;
+}
+
+.skills-graph-cta {
+    display: inline-block;
+    justify-self: end;
+
+    margin-top: 22px;
+    padding: 12px 18px;
+
+    border: 2px solid #000000;
+    border-radius: 4px;
+
+    background-color: #000000;
+    color: #ffffff;
+
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+
+    text-decoration: none;
+    pointer-events: auto;
+    cursor: pointer;
+
+    transition:
+            background-color 160ms ease,
+            color 160ms ease,
+            transform 160ms ease;
+}
+
+.skills-graph-cta:hover {
+    background-color: #ffffff;
+    color: #000000;
+    transform: translateY(-2px);
+}
+
+.skills-graph-cta:focus-visible {
+    outline: 3px solid #3ecf6f;
+    outline-offset: 3px;
+}
+
+.skills-graph-cta:active {
+    transform: translateY(0);
 }
 
 /*
- * On narrower screens, move the heading toward the bottom and let
- * the graph use the upper portion of the section.
+ * On narrower screens, place the introduction toward the bottom so
+ * that the graph can use more of the upper part of the section.
  */
 @media (max-width: 800px) {
+    .skills-graph-container {
+        height: calc(100dvh - var(--navbar-height));
+        min-height: 520px;
+    }
+
     .skills-graph-text {
         top: auto;
         right: 1.5rem;
-        bottom: 3rem;
+        bottom: 2rem;
         left: 1.5rem;
         transform: none;
     }
@@ -85,5 +153,10 @@
     .skills-graph-text p {
         font-size: 1rem;
         white-space: normal;
+    }
+
+    .skills-graph-cta {
+        margin-top: 18px;
+        font-size: 15px;
     }
 }
