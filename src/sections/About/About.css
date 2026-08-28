@@ -35,7 +35,7 @@
 }
 
 .about-followup {
-    padding-top: 1rem;
+    padding-top: 0.5rem;
     padding-left: 345px;
     font-size: 20px;
     font-family: AppleGothic, sans-serif;
@@ -46,11 +46,44 @@
     font-size: 18px;
     font-family: "AppleGothic", sans-serif;
     font-weight: 800;
-    padding-left: 8px;
+    padding-left: 345px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 13px 7rem;
     list-style-position: inside;
     list-style-type: disc;
 
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.heading-line {
+    position: relative;
+    flex: 1;
+    height: 2px;
+    background-color: #000000;
+}
+
+.heading-line::before,
+.heading-line::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: #000000;
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.heading-line::before {
+    left: 0;
+}
+
+.heading-line::after {
+    right: 0;
 }

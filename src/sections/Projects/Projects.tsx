@@ -4,7 +4,10 @@ function Projects() {
     return(
         <div className="Projects">
             <div className="content-wrapper">
-                <h1>Projects</h1>
+                <div className="section-heading">
+                    <h1>Projects</h1>
+                    <span className="heading-line"></span>
+                </div>
             </div>
         </div>
     )

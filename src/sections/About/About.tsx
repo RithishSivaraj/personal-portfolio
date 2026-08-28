@@ -17,10 +17,13 @@ function About() {
     return (
         <div className="about">
             <div className="about-wrapper">
-            <h1>About</h1>
+                <div className="section-heading">
+                    <h1>About</h1>
+                    <span className="heading-line"></span>
+                </div>
                 <img src={profile} alt="profile" className="about-img" />
                 <p className="about-intro">
-                    I'm a Computer Science graduate from San Diego State University and I love building things from the
+                    I'm a Computer Science graduate from San Diego State University and I enjoy building things from the
                     ground up. My work and project experience spans distributed systems, backend infrastructure, and machine learning.
                     </p>
                 <p className="about-followup">
