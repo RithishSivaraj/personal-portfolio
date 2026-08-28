@@ -15,6 +15,7 @@ function NavBar() {
             </a>
 
                 <div className={isMenuOpen ? "navbar-links open" : "navbar-links"}>
+                    <a href="#Home" className="navbar-link">Home</a>
                 <a href="#about" className="navbar-link">About</a>
                 <a href="#experience" className="navbar-link">Experience</a>
                 <a href="#projects" className="navbar-link">Projects</a>

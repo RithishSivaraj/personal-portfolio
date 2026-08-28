@@ -30,8 +30,13 @@ Note to self: Boot sequence animation might be taking too long, and might be bet
 
 #### _Navbar:_
 
-#### _Landing Hero:_
+Navbar was completed. I initially chose a Navy bluish color, but I think the black and white scheme looks a lot better. <br>
+Possible design note: The linkedin and github icons are the original color of their actual logos. Maybe I should make them both white, and glow in their original colors when hovering?
 
+#### _Landing Hero:_
+I built a react 2d force graph representing my projects and tools that I have worked with. This took SUPER LONG. GPT helped in figuring out the positioning, but building the graph itself was relatively easy.
+<br>
+Note: Need to test how this graph comes up on mobile. I think it might honestly be a little too choppy on phone/tablet, so I may hide the graph view for those devices alone.
 #### _About:_
 
 #### _Education:_

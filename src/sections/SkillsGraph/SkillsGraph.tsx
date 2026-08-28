@@ -228,7 +228,7 @@ function SkillsGraph() {
         }
 
         // Start left of the heading and slightly above center.
-        const initialGraphX = -dimensions.width * 0.22;
+        const initialGraphX = -dimensions.width * 0.34;
         const initialGraphY = -dimensions.height * 0.07;
 
         const chargeForce = graph.d3Force("charge");

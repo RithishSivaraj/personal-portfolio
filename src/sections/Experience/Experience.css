@@ -1,0 +1,17 @@
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+.Experience {
+    padding-top: 120px;
+    width: 100%;
+    height: 100%;
+    top: 40px;
+}
+
+
+.Experience h1 {
+    font-size: 42px;
+    font-family: "JetBrains Mono", monospace;
+}

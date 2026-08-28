@@ -63,7 +63,7 @@
     margin: 0;
 
     font-family: monospace;
-    font-size: clamp(2rem, 3vw, 45px);
+    font-size: clamp(3rem, 4.5vw, 56px);
     line-height: 1.1;
     white-space: nowrap;
 }
@@ -78,7 +78,7 @@
     margin: 8px 0 0;
 
     font-family: AppleGothic;
-    font-size: clamp(0.9rem, 1.25vw, 18px);
+    font-size: clamp(1.3rem, 3.6vw, 22px);
     line-height: 1.4;
     color: #444444;
     white-space: normal;

@@ -9,19 +9,22 @@
     align-items: center;
     gap: 18px;
     padding: 16px 32px;
+    width: 100%;
 }
 :root {
     --navbar-height: 73px;
 }
 
 .navbar {
-    background-color: #152129;
+    background-color: #000000;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: var(--navbar-height);
     z-index: 10;
+    display: flex;
+    align-items: center;
 }
 
 .navbar-brand {

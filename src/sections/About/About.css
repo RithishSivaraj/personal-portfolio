@@ -1,0 +1,56 @@
+.about-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+.about {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 40px;
+    bottom: 200px;
+}
+
+.about-img {
+    float: left;
+    width: 250px;
+    height: 250px;
+    border-radius: 10%;
+    object-fit: cover;
+    shape-margin: 3.0rem;
+    margin-right: 6.0rem;
+}
+
+.about h1 {
+    font-size: 42px;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.about-intro {
+    padding-left: 50px;
+    font-size: 20px;
+    font-family: AppleGothic, sans-serif;
+    line-height: 1.6;
+}
+
+.about-followup {
+    padding-top: 1rem;
+    padding-left: 345px;
+    font-size: 20px;
+    font-family: AppleGothic, sans-serif;
+    line-height: 1.6;
+}
+
+.skills-columns {
+    font-size: 18px;
+    font-family: "AppleGothic", sans-serif;
+    font-weight: 800;
+    padding-left: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 13px 7rem;
+    list-style-position: inside;
+    list-style-type: disc;
+
+}
