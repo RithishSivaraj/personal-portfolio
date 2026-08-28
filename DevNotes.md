@@ -38,16 +38,12 @@ I built a react 2d force graph representing my projects and tools that I have wo
 <br>
 Note: Need to test how this graph comes up on mobile. I think it might honestly be a little too choppy on phone/tablet, so I may hide the graph view for those devices alone.
 #### _About:_
-
-#### _Education:_
-
+I completed a simple about section. Perhaps I could just embed my certs in that too? Still have to decide between creating an individual certification tab or not.
 #### _Experience:_
-
+Thinking of a timeline design, where theres a black timeline with black nodes. Each node is clickable and will follow a left-right chronological order.
 #### _Projects:_
 
 #### _Resume:_
-
-#### _Contact:_
 
 
 ██████╗ ██╗████████╗██╗  ██╗██╗███████╗██╗  ██╗         ██████╗ ███████╗
